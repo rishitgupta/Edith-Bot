@@ -9,4 +9,4 @@ async def on_ready():
 @client.command()
 async def edith(ctx):
     await ctx.send("teri maa ki- chup")
-client.run("NzMxNjE2MDUwNzU5ODYwMzE1.XwoomA.3BptSlkI6f2aV3S-mMzmsUKeI2Q")
+client.run("")
