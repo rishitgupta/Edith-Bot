@@ -1,4 +1,4 @@
-# Excellent/Ah, Noice/Nice, Cool, Toit, Woooooo/Woohoo (Ted), nikal, knockknockknock, maybeeeeeee, nooo, haie (ross), damn
+# add on_delete_message()
 
 import discord
 from discord.ext import commands
@@ -8,7 +8,7 @@ import io, aiohttp
 
 from googlesearch import search
 
-client = commands.Bot(command_prefix = "")
+client = commands.Bot(command_prefix = "", case_insensitive = True)
 
 media = {
     # Friends
@@ -21,22 +21,26 @@ media = {
     "toit": [r"https://basicallylaurenslifetravel.files.wordpress.com/2019/04/tumblr_p0gl7i7p5i1qjvfkco2_500.gif"],
     # Memes
     "maybe": [r"https://media.tenor.com/images/6bdd650af717980d5d898d4fd0b8ad52/tenor.gif"],
+    "nikal": [r"https://media.tenor.com/images/7e6a7b73faa414e321811e0ecb34519e/tenor.gif"],
     # Misc
     "excellent": [r"https://media1.tenor.com/images/9e3409f358c9cec06061c1ec76d86d47/tenor.gif?itemid=4076853"],
 }
 
 @client.event
 async def on_ready():
+    print("Bot loading...")
+    print()
     # Configuring GIFs
     for i in media:
         async with aiohttp.ClientSession() as session:
             async with session.get(media[i][0]) as resp:
                 if not resp.status == 200: # HTTP response status code 200 means okay
                     print(f"Could not download file: {i}")
+                    continue
                 media[i].append(io.BytesIO(await resp.read()))
-                print(f"{media[i][0]} loaded", end="; ")
-
-    print("Bot is ready.")
+                print(f"\"{i}\" loaded", end="; ")
+    print("\n")
+    print("All systems, good to go.")
 
 # Ping
 @client.command(aliases=["whatistheping", "whatstheping", "wotisleping"])
@@ -68,7 +72,35 @@ async def chandler(ctx, name, *, adj):
 async def edith(ctx):
     await ctx.send("> Heyo, this is Edith. \n> A bot designed to mess around with you. \n> Bask in the sheer suffering that I shall wreak upon your puny existences, \n> And a little bit of fun, too. :)")
 
-# GIFS
+# <-------------GIFS------------->
+# Friends
+@client.command(aliases=["noooo", "nooooo"])
+async def nooo(ctx):
+    await ctx.send(file=discord.File(media["nooo"][1], "nooo.gif"))
+@client.command()
+async def  bhap(ctx):
+    await ctx.send(file=discord.File(media["bhap"][1], "bhap.gif"))
+@client.command(aliases=["middle-finger", ":middle_finger:"])
+async def middleFinger(ctx):
+    await ctx.send(file=discord.File(media["middle-finger"][1], "middle-finger.gif"))
+# Brooklyn Nine-Nine
 @client.command(aliases=["nice"])
 async def noice(ctx):
     await ctx.send(file=discord.File(media["noice"][1], "noice.gif"))
+@client.command(aliases=["coolcoolcool"])
+async def cool(ctx):
+    await ctx.send(file=discord.File(media["cool"][1], "cool.gif"))
+@client.command()
+async def toit(ctx):
+    await ctx.send(file=discord.File(media["toit"][1], "toit.gif"))
+# Memes
+@client.command(aliases=["maybeee", "mayyybeee"])
+async def mayyybe(ctx):
+    await ctx.send(file=discord.File(media["maybe"][1], "maybe.gif"))
+@client.command(aliases=["nikallawde", "nikallavde", "pehlifursatmeinnikal"])
+async def nikal(ctx):
+    await ctx.send(file=discord.File(media["nikal"][1], "nikal.gif"))
+# Misc.
+@client.command(aliases=["ahhhhh"])
+async def excellent(ctx):
+    await ctx.send(file=discord.File(media["excellent"][1], "excellent.gif"))
