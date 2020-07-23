@@ -36,6 +36,16 @@ media = {
     "excellent": [r"https://media1.tenor.com/images/9e3409f358c9cec06061c1ec76d86d47/tenor.gif?itemid=4076853"],
 }
 
+global gameSettings
+gameSettings = {
+    "isNACOn": False,
+}
+
+#youtubesettings = {}
+#ytdl = youtube_dl.YoutubeDL(youtubesettings)
+
+#ffmpeg-settings = {}
+
 @client.event
 async def on_ready():
     print("-"*10)
@@ -84,10 +94,28 @@ async def chandler(ctx, name, *, adj):
 async def edith(ctx):
     await ctx.send("> Heyo, this is Edith. \n> A bot designed to mess around with you. \n> Bask in the sheer suffering that I shall wreak upon your puny existences, \n> And a little bit of fun, too. :)")
 
+@client.command()
+async def i(ctx, *, hopefullyaquote):
+    if hopefullyaquote.lower() == "am inevitable":
+        await ctx.send("And I... am... Iron Man.")
+    elif hopefullyaquote.lower() == "am iron man":
+        await ctx.send("Bhak gadhdhe, tu ni hai.")
+    else:
+        pass
+
 @client.command(aliases=["googlesearch"])
 async def google(ctx, *, query):
     for j in search(query, lang="en", safe="off", num=3, stop=3, pause=2, verify_ssl=True):
         await ctx.send(j)
+
+@client.command(aliases=["urbandict", "define", "ud"])
+async def urbandictionary(ctx, *, term):
+    definitions = ud.define(term)
+    await ctx.send(f"> **_{definitions[0].word.title()}_**")
+    for i in range(0, 3):
+        tempDef = definitions[i].definition.replace("[", "").replace("]", "").replace("\n", "\n> \t")
+        tempEx = definitions[i].example.replace("[", "").replace("]", "").replace("\n", "\n> \t")
+        await ctx.send(f"> **{i+1}.** \n> \t{tempDef} \n> \t_\"{tempEx}\"_")
 
 # <-----------SONGS-------------->
 @client.command(aliases=["joinedith"])
@@ -104,14 +132,129 @@ async def youtube(ctx, *, song_name):
     for j in search(f"{song_name} song YouTube", lang="en", safe="off", num=1, stop=1, pause=2, verify_ssl=True):
         song_link = j
 
-@client.command(aliases=["urbandict", "define", "ud"])
-async def urbandictionary(ctx, *, term):
-    definitions = ud.define(term)
-    await ctx.send(f"> **_{term.title()}_**")
-    for i in range(0, 3):
-        tempDef = definitions[i].definition.replace("[", "").replace("]", "").replace("\n", "\n> \t")
-        tempEx = definitions[i].example.replace("[", "").replace("]", "").replace("\n", "\n> \t")
-        await ctx.send(f"> **{i+1}.** \n> \t{tempDef} \n> \t_\"{tempEx}\"_")
+
+
+
+
+
+# <-------------GAME------------->
+@client.command()
+async def game(ctx, *, gameID):
+    async def startNAC(ctx):
+        gameSettings["isNACOn"] = True
+        global positions
+        positions = [
+            # First Row
+            [
+                {
+                    "position": "top-left",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "top-center",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "top-right",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+            ],
+            # Second Row
+            [
+                {
+                    "position": "middle-left",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "middle-center",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "middle-right",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+            ],
+            # Third Row
+            [
+                {
+                    "position": "bottom-left",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "bottom-center",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+                {
+                    "position": "bottom-right",
+                    "sign": "   ",
+                    "isFilled": False,
+                },
+            ]
+        ]
+
+        await ctx.send("**WELCOME TO TIC-TAC-TOE!** \nType \"_rules_\" in chat to hear the rules. \nWould you like to play versus a person or versus Edith?")
+
+    def makeGameBoardNAC():
+        # Making game board
+        gameBoardNAC = f""
+        for i in range(0, len(positions)):
+            if i == 0:
+                gameBoardNAC += "``` \n"
+            gameBoardNAC += "+---+---+---+ \n"
+            for j in range(0, len(positions[i])):
+                gameBoardNAC += f"|{positions[i][j]['sign']}"
+                if j == 2:
+                    gameBoardNAC += f"| \n"
+            if i == 2:
+                gameBoardNAC += "+---+---+---+ \n```"
+        return gameBoardNAC
+
+    games = {
+        1: ["noughts and crosses", "tic tac toe", "tic-tac-toe", "zero katta", "zero-katta"]
+    }
+
+    for i in games:
+        if gameID in games[i]:
+            await startNAC(ctx)
+            break
+
+@client.command()
+async def versus(ctx, *, competitor):
+    if gameSettings["isNACOn"] == False:
+        pass
+    else:
+        global NACEdith
+        if competitor.title() == "Edith":
+            NACEdith = True
+        else:
+            NACEdith = False
+
+    if NACEdith == False:
+        pass
+    elif NACEdith == True:
+        await ctx.send("LET THE GAMES BEGIN!")
+        await ctx.send(makeGameBoardNAC())
+
+@client.command()
+async def rules(ctx):
+    if gameSettings["isNACOn"] == True:
+        await ctx.send("If you don't know the rules to this game, then may the Lord help you. \nType \'fill\' and then a position, such as top-left, middle-right, bottom-center et cetera... \nIf you need more information, please go relive your childhood. Thank you.")
+    else:
+        await ctx.send("No game has been started, though...")
+
+
+
+
+
+
 
 # <-------------GIFS------------->
 @client.command(aliases=["listofgifs", "gif-list"])
@@ -124,7 +267,9 @@ async def gifList(ctx):
 # Friends
 @client.command(aliases=["noooo", "nooooo"])
 async def nooo(ctx):
-    await ctx.send(file=discord.File(media["nooo"][1], "nooo.gif"))
+    picture = discord.File(media["nooo"][1], "nooo.gif")
+    await ctx.send(file=picture)
+    del picture
 @client.command()
 async def  bhap(ctx):
     await ctx.send(file=discord.File(media["bhap"][1], "bhap.gif"))
@@ -168,4 +313,3 @@ async def nikal(ctx):
 @client.command(aliases=["ahhhhh"])
 async def excellent(ctx):
     await ctx.send(file=discord.File(media["excellent"][1], "excellent.gif"))
-
